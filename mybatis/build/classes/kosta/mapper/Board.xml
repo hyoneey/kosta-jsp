@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- 보드 매퍼 인터페이스 경로를 적어줘야함 -->
+<mapper namespace="kosta.mapper.BoardMapper">
+	<cache />
+	
+	<insert id="insertBoard" parameterType="Board">
+		insert into board(
+			seq,title,writer,contents,regdate,hitcount
+		)values(
+			board_seq.nextval, #{title},#{writer},#{contents}, sysdate,0
+		)
+			<!-- #{Board 안에 있는 변수명 이름과 동일} -->
+	</insert>
+	
+	<!-- 검색 area는 체크박스, foreach로 반복할때마다 item에 넣기 -->
+	<select id="listBoard" resultType="Board" parameterType="Search">
+		select * from board
+		<if test="area != null">
+			<where>
+				<!-- title LIKE %aa% or writer LIKE %aa% -->
+				<foreach collection="area" item="item" separator="or" open="(" close=")">
+					<!-- item이 title인데 변수가 아니라 원래의 컬럼명인것처럼 하기 위해 '$'표시, #은 상수로 있어야하는데 변수로 가져오기 때문에 오류가 발생 -->
+					${item} LIKE #{searchKey}
+				</foreach>
+			</where>
+		</if>
+	</select>
+	
+		
+	<select id="detailBoard" resultType="Board">
+		select * from board where seq = #{seq}
+	</select>
+	
+	<update id="updateBoard" parameterType="Board" >
+		update board set title=#{title},contents=#{contents} where seq=#{seq}
+	</update>
+	
+	<delete id="deleteBoard"  parameterType="Board">
+		delete from board where seq=#{seq}
+	</delete>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
